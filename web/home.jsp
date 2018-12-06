@@ -1,8 +1,4 @@
-<%-- 
-    Document   : home
-    Created on : 05/12/2018, 20:53:06
-    Author     : and_h
---%>
+
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -12,6 +8,7 @@
         <title>Home</title>
     </head>
     <body>
-        <h1>Home</h1>
+        <%@include file="WEB-INF/jspf/header.jspf" %>
+        <h1>Página Inicial</h1>
     </body>
 </html>

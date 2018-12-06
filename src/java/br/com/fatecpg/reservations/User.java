@@ -5,10 +5,6 @@
  */
 package br.com.fatecpg.reservations;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -20,36 +16,16 @@ public class User {
     private String cpf;
     private String nome;
     private String telefone;
+    private String login;
+    private String senha;
 
-    public static ArrayList<User> getList() throws Exception{
-        ArrayList<User> list = new ArrayList<>();
-        Class.forName("org.apache.derby.jdbc.ClientDriver");
-        String url = "jdbc:derby://localhost:1527/sample";
-        String user = "app", pass = "app";
-        Connection sampleCon = DriverManager.getConnection(url, user, pass);
-        Statement usuarioStmt = sampleCon.createStatement();
-        String SQL = "SELECT * FROM USUARIO";
-        ResultSet usuarioRs = usuarioStmt.executeQuery(SQL);
-        while (usuarioRs.next()){
-            int idusuario = usuarioRs.getInt("IDUSUARIO");
-            String cpf = usuarioRs.getString("CPF");
-            String nome = usuarioRs.getString("NOME");
-            String telefone = usuarioRs.getString("TELEFONE");
-            
-            User u = new User(idusuario, cpf, nome, telefone);
-            list.add(u);
-        }
-        usuarioRs.close();
-        usuarioStmt.close();
-        sampleCon.close();
-        return list;
-    }
-    
-    public User(int idusuario, String cpf, String nome, String telefone) {
+    public User(int idusuario, String cpf, String nome, String telefone, String login, String senha) {
         this.idusuario = idusuario;
         this.cpf = cpf;
         this.nome = nome;
         this.telefone = telefone;
+        this.login = login;
+        this.senha = senha;
     }
 
     public int getIdusuario() {
@@ -83,5 +59,41 @@ public class User {
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
-    
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public static User getUser(String login, String senha) 
+            throws Exception{
+        String SQL = "SELECT * FROM USUARIO "
+                + "WHERE login = ? AND senha = ?";
+        Object parameters[] = {login, senha.hashCode()};
+        ArrayList<Object[]> list = DatabaseConnector.getQuery(SQL, parameters);
+        if(list.isEmpty()){
+            return null;
+        } else {
+            Object row[] = list.get(0);
+            User u = new User(
+                    (int)row[0]
+                    ,(String) row[1]
+                    ,(String) row[2]
+                    ,(String) row[3]
+                    ,(String) row[4]
+                    ,(String) row[5]);
+            return u;
+        }
+    }
 }
